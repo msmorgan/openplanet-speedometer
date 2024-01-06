@@ -53,3 +53,89 @@ namespace Images
         return ret;
     }
 }
+
+interface IRpmSource
+{
+    float GetRpm(CSceneVehicleVisState@ vis);
+}
+
+namespace SmoothRpmSource
+{
+    class Entry
+    {
+        float Rpm;
+        uint64 Timestamp;
+        
+        Entry(float rpm)
+        {
+            Rpm = rpm;
+            Timestamp = Time::Now;
+        }
+
+        Entry(float rpm, uint64 timestamp)
+        {
+            Rpm = rpm;
+            Timestamp = timestamp;
+        }
+    }
+}
+
+class SmoothRpmSource : IRpmSource
+{
+    private uint capacity = 128;
+    private array<SmoothRpmSource::Entry@> buffer = {};
+    private uint head = 0;
+    private uint tail = 0;
+
+    uint64 TimeoutMs = 500;
+
+    SmoothRpmSource(uint64 timeoutMs)
+    {
+        TimeoutMs = timeoutMs;
+        for (uint i = 0; i < capacity; i++)
+        {
+            buffer.InsertLast(null);
+            @buffer[i] = SmoothRpmSource::Entry(0, 0);
+        }
+    }
+
+    private float Raw(CSceneVehicleVisState@ vis)
+    {
+        return VehicleState::GetRPM(vis);
+    }
+
+    float GetRpm(CSceneVehicleVisState@ vis) override
+    {
+        float rpm = Raw(vis);
+
+        uint64 cutoff = Time::Now - TimeoutMs;
+        while (head != tail && buffer[head].Timestamp < cutoff)
+        {
+            // Forget old entries.
+            head = (head + 1) % capacity;
+        }
+
+        // Add the new entry.
+        buffer[tail].Rpm = rpm;
+        buffer[tail].Timestamp = Time::Now;
+        tail = (tail + 1) % capacity;
+
+        if (tail == head)
+        {
+            // Capacity exceeded. Forget the oldest entry.
+            head = (head + 1) % capacity;
+        }
+
+        float sum = 0;
+        uint count = 0;
+        uint idx = head;
+        while (idx != tail)
+        {
+            sum += buffer[idx].Rpm;
+            count++;
+            idx = (idx + 1) % capacity;
+        }
+
+        return sum / count;
+    }
+}

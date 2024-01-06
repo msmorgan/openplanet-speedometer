@@ -1,4 +1,9 @@
-#if MP4
+#if TMNEXT
+
+// TM2020 functions go here.
+
+#elif MP4
+
 void SetSiblings(CGameManialinkControl@ control, bool visible)
 {
     if (control is null) return;

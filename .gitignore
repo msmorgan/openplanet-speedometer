@@ -1,2 +1,3 @@
 build-op.bat
+venv/
 *.op

@@ -1,8 +1,8 @@
-class Dashboard
+class Speedometer
 {
     Gauge@ m_gauge;
 
-    Dashboard()
+    Speedometer()
     {
         UpdateGaugeTheme();
     }
@@ -13,6 +13,9 @@ class Dashboard
         {
             case PluginSettings::Themes::Basic:
                 @m_gauge = BasicGauge();
+                break;
+            case PluginSettings::Themes::Advanced:
+                @m_gauge = AdvancedGauge();
                 break;
             case PluginSettings::Themes::BasicDigital:
                 @m_gauge = BasicDigitalGauge();

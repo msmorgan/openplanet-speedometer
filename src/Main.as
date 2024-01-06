@@ -1,8 +1,8 @@
-Dashboard@ g_dashboard;
+Speedometer@ g_speedometer;
 
 void Main()
 {
-    @g_dashboard = Dashboard();
+    @g_speedometer = Speedometer();
 }
 
 void Render()
@@ -10,7 +10,7 @@ void Render()
 #if MP4
     SetMP4Speedometer(false);
 #endif
-    g_dashboard.Render();
+    g_speedometer.Render();
 }
 
 void RenderInterface()
@@ -30,7 +30,7 @@ void RenderMenu()
 
 void OnSettingsChanged()
 {
-    g_dashboard.UpdateGaugeTheme();
+    g_speedometer.UpdateGaugeTheme();
 }
 
 void OnDestroyed()

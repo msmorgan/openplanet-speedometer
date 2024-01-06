@@ -15,6 +15,8 @@ namespace PluginSettings
     enum Themes {
         Basic,
         BasicDigital,
+        Advanced,
+        AdvancedDigital,
         TrackmaniaTurbo,
         Ascension2023
     }
@@ -31,9 +33,12 @@ namespace PluginSettings
     [Setting name="Use velocity instead of speed (useful for ice)" category="General"]
     bool ShowVelocity = false;
 
+    [Setting name="RPM smoothing (ms, 0=none)" category="General"]
+    uint64 RpmSmoothingTimeout = 250;
+
     [SettingsTab name="Theme Settings"]
     void RenderThemeSettingsTab()
     {
-        g_dashboard.m_gauge.RenderSettingsTab();
+        g_speedometer.m_gauge.RenderSettingsTab();
     }
 }
